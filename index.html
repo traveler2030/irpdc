@@ -103,7 +103,46 @@ function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.s
 function copyCode(c){if(navigator.clipboard){navigator.clipboard.writeText(c).then(function(){toast(c+' 복사됨');});}else{var ta=document.createElement('textarea');ta.value=c;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast(c+' 복사됨');}}
 function searchDart(i){var d=M[i];window.open('https://www.google.com/search?q='+encodeURIComponent(d.bn.substring(0,30)+' 투자설명서'),'_blank');}
 function exportCSV(){var fl=GF();var hdr=['분류','코드','펀드명','운용사','TDF','빈티지','환헤지','순자산(억)','총보수(%)','TER(%)','실질1Y(%)','1Y(%)','2Y(%)','3Y(%)','주식(%)','채권(%)','유동(%)'];var rows=[hdr.join(',')];for(var i=0;i<fl.length;i++){var d=fl[i];var row=['"'+d.sf+'"',d.cd,'"'+d.bn.replace(/"/g,'""')+'"','"'+d.c+'"',d.t,d.v||'',d.h,d.a||'',d.ft2!=null?d.ft2:'',d.ftr!=null?d.ftr:'',d.nr||'',d.r1||'',d.r2||'',d.r3||'',d.sp||'',d.bp||'',d.lp||''];rows.push(row.join(','));}var csv='\uFEFF'+rows.join('\n');var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='pension_funds_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(url);toast(fl.length+'개 펀드 CSV 다운로드');}
-function SP(i){var d=M[i],h='<div class="si-box">';h+='<div class="si-row"><span class="si-lbl">파트너사<\/span><span class="si-val">'+(d.sp2||'-')+'<\/span><\/div>';if(d.sty)h+='<div class="si-row"><span class="si-lbl">스타일<\/span><span class="si-val">'+d.sty+'<\/span><\/div>';h+='<div class="si-row"><span class="si-lbl">상품코드<\/span><span class="si-val cd-cell" onclick="copyCode(\x27'+d.cd+'\x27)">'+d.cd+' 📋<\/span><\/div>';h+='<div class="si-row" style="margin-top:6px"><span class="si-val">'+(d.sd2||'')+'<\/span><\/div><\/div>';if(d.ds)h+='<div class="pp-s"><div class="pp-st">투자설명서 요약 (제로인)<\/div><div style="color:var(--t);font-size:12px;line-height:1.6">'+d.ds+'<\/div><\/div>';h+='<div style="margin-top:12px">';if(d.cu)h+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="btn btn-gn">🏢 운용사 펀드 페이지<\/a>';h+='<span class="btn btn-bl" onclick="searchDart('+d.id+')">🔍 투자설명서 검색<\/span>';h+='<\/div>';OP(d.bn.substring(0,50),h);}
+function SP(i){var d=M[i],h='';
+/* 핵심 지표 카드 */
+var hm={'H':'환헤지','UH':'환노출','부분헤지':'부분헤지','미확인':'-'};
+h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
+h+='<div style="flex:1;min-width:80px;background:var(--bg2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--tm)">유형<\/div><div style="font-size:13px;font-weight:700;color:var(--t)">'+d.st+'<\/div><\/div>';
+h+='<div style="flex:1;min-width:80px;background:var(--bg2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--tm)">환헤지<\/div><div style="font-size:13px;font-weight:700;color:'+(d.h==='H'?'var(--bl)':d.h==='UH'?'var(--rd)':'var(--t)')+'">'+hm[d.h]+'<\/div><\/div>';
+h+='<div style="flex:1;min-width:80px;background:var(--bg2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--tm)">순자산<\/div><div style="font-size:13px;font-weight:700;color:var(--t)">'+FA(d.a)+'억<\/div><\/div>';
+if(d.ftr)h+='<div style="flex:1;min-width:80px;background:var(--bg2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--tm)">TER<\/div><div style="font-size:13px;font-weight:700;color:var(--cy)">'+d.ftr.toFixed(3)+'%<\/div><\/div>';
+h+='<\/div>';
+/* 자산배분 바 */
+if(d.sp||d.bp){h+='<div style="margin-bottom:12px"><div style="font-size:10px;color:var(--tm);margin-bottom:4px">자산배분 (추정)<\/div>';h+=AB(d);
+h+='<div style="display:flex;gap:12px;margin-top:4px;font-size:10px">';
+if(d.sp)h+='<span><span style="display:inline-block;width:8px;height:8px;background:#d03040;border-radius:2px"><\/span> 주식 '+d.sp+'%<\/span>';
+if(d.bp)h+='<span><span style="display:inline-block;width:8px;height:8px;background:#2a6cdb;border-radius:2px"><\/span> 채권 '+d.bp+'%<\/span>';
+if(d.lp)h+='<span><span style="display:inline-block;width:8px;height:8px;background:#0d8050;border-radius:2px"><\/span> 유동 '+d.lp+'%<\/span>';
+h+='<\/div><\/div>';}
+/* 수익률 비교 */
+if(d.r1||d.r2||d.r3){h+='<div style="display:flex;gap:8px;margin-bottom:12px">';
+if(d.r1)h+='<div style="flex:1;text-align:center;padding:6px;background:var(--bg2);border-radius:6px"><div style="font-size:9px;color:var(--tm)">1Y<\/div><div style="font-size:14px;font-weight:700;color:'+(d.r1>0?'var(--gn)':'var(--rd)')+'">'+d.r1.toFixed(2)+'%<\/div><\/div>';
+if(d.r2)h+='<div style="flex:1;text-align:center;padding:6px;background:var(--bg2);border-radius:6px"><div style="font-size:9px;color:var(--tm)">2Y<\/div><div style="font-size:14px;font-weight:700;color:'+(d.r2>0?'var(--gn)':'var(--rd)')+'">'+d.r2.toFixed(2)+'%<\/div><\/div>';
+if(d.r3)h+='<div style="flex:1;text-align:center;padding:6px;background:var(--bg2);border-radius:6px"><div style="font-size:9px;color:var(--tm)">3Y<\/div><div style="font-size:14px;font-weight:700;color:'+(d.r3>0?'var(--gn)':'var(--rd)')+'">'+d.r3.toFixed(2)+'%<\/div><\/div>';
+if(d.nr)h+='<div style="flex:1;text-align:center;padding:6px;background:var(--bg2);border-radius:6px"><div style="font-size:9px;color:var(--tm)">실질1Y<\/div><div style="font-size:14px;font-weight:700;color:'+(d.nr>0?'var(--gn)':'var(--rd)')+'">'+d.nr.toFixed(2)+'%<\/div><\/div>';
+h+='<\/div>';}
+/* 투자전략 (AI 분석 또는 제로인) */
+var desc=d.sd2||d.sp2||'';
+if(desc){
+var clean=desc.replace(/이\s*투자신탁은\s*/g,'').replace(/이\s*집합투자기구는\s*/g,'').replace(/제로인에서\s*제공하는[^.]*\./g,'').replace(/본\s*정보에\s*의존하여[^.]*\./g,'').replace(/데이터\s*및\s*분석자료는[^.]*\./g,'').replace(/그\s*정확성이나[^.]*\./g,'').trim();
+if(clean.length>300)clean=clean.substring(0,297)+'...';
+h+='<div class="si-box"><div style="font-size:11px;font-weight:600;color:var(--td);margin-bottom:4px">투자전략<\/div><div style="font-size:12px;line-height:1.6;color:var(--t)">'+clean+'<\/div><\/div>';}
+/* 상품코드 + 환헤지 상세 */
+h+='<div style="display:flex;gap:12px;font-size:11px;color:var(--td);margin-bottom:10px">';
+h+='<span>상품코드: <span class="cd-cell" onclick="copyCode(\x27'+d.cd+'\x27)" style="font-size:11px">'+d.cd+' 📋<\/span><\/span>';
+if(d.hd)h+='<span>환헤지: '+d.hd+'<\/span>';
+h+='<\/div>';
+/* 링크 */
+h+='<div>';
+if(d.cu)h+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="btn btn-gn">🏢 운용사 펀드 페이지<\/a>';
+h+='<span class="btn btn-bl" onclick="searchDart('+d.id+')">🔍 투자설명서 검색<\/span>';
+h+='<\/div>';
+OP(d.bn.substring(0,50)+(d.etf?' [ETF]':''),h);}
 function AP(i,type){var d=M[i];var tm={stock:'주식',bond:'채권'};var am={stock:d.sa,bond:d.ba};var a=am[type];var h='';if(!a||(a.total==null&&(!a.detail||a.detail.length===0))){h='<div class="pp-e">세부 내역을 확인할 수 없습니다.<\/div>';}else{if(a.detail&&a.detail.length>0){h+='<div class="pp-s"><div class="pp-st">세부 내역<\/div>';for(var j=0;j<a.detail.length;j++){h+='<div class="pp-r"><span class="nm">'+a.detail[j].name+'<\/span><span class="pc">'+a.detail[j].pct+'%<\/span><\/div>';}h+='<\/div>';}if(a.total!=null)h+='<div class="pp-tot"><span class="nm">총 비중<\/span><span class="pc">'+a.total+'%<\/span><\/div>';}h+='<div style="margin-top:12px">';if(d.cu)h+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="btn btn-gn">🏢 운용사에서 확인<\/a>';h+='<\/div>';OP(d.bn.substring(0,50)+' — '+tm[type],h);}
 function HP(i){var d=M[i];var hm={'H':'환헤지(H)','UH':'환노출(UH)','부분헤지':'부분헤지','미확인':'미확인'};var h='<div style="font-size:13px;line-height:1.5"><strong>분류:<\/strong> '+(hm[d.h]||d.h)+'<br>';if(d.hd)h+='<strong>상세:<\/strong> '+d.hd+'<br>';h+='<\/div>';OP(d.bn.substring(0,50)+' — 환헤지',h);}
 function TE(i){if(EX[i])delete EX[i];else EX[i]=true;R();}
