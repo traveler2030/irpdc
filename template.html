@@ -165,7 +165,7 @@ rw+='<td class="n '+RC(d.r1)+'">'+FR(d.r1,d)+'<\/td>';
 rw+='<td class="n '+RC(d.r2)+'">'+FR(d.r2)+'<\/td>';
 rw+='<td class="n '+RC(d.r3)+'">'+FR(d.r3)+'<\/td>';
 rw+='<td class="ck">'+AB(d)+'<\/td>';
-rw+='<td class="ck" onclick="event.stopPropagation();SP('+d.id+')" style="color:var(--td);font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(d.sp2?d.sp2.substring(0,15):'-')+'<\/td>';
+var _desc=d.sd2||d.sp2||'';rw+='<td class="ck" onclick="event.stopPropagation();SP('+d.id+')" style="color:var(--td);font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(_desc?_desc.substring(0,20):'-')+'<\/td>';
 rw+='<td style="text-align:center">';
 if(d.cu)rw+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="lk" onclick="event.stopPropagation()" title="운용사">🏢<\/a>';
 rw+='<span class="lk" onclick="event.stopPropagation();searchDart('+d.id+')" title="투자설명서 검색">🔍<\/span>';
