@@ -116,9 +116,11 @@ def merge_fund_data():
             elif "(UH)" in name:
                 hedge = {"type": "UH", "detail": "환헤지 미실시 (펀드명 표기)"}
 
-        # 펀드설명: FunETF > FundDoctor 우선
-        sp2 = fe.get("fund_feature", "") or fd.get("fund_feature", "")
-        sd2 = fe.get("fund_strategy", "") or fd.get("fund_strategy", "")
+        # 펀드설명: DART 분석 > FunETF > FundDoctor 우선
+        dart_strategy = dart.get("strategy", "")
+        dart_feature = dart.get("feature", "")
+        sp2 = dart_feature or fe.get("fund_feature", "") or fd.get("fund_feature", "")
+        sd2 = dart_strategy or fe.get("fund_strategy", "") or fd.get("fund_strategy", "")
 
         # 투자 스타일 추론
         sty = _infer_style(bn, sp2, sd2, fund.get("subType", ""))
@@ -137,10 +139,14 @@ def merge_fund_data():
         ftr_val = fund.get("ftr") or fe.get("sharpe_3y") or 0
         nr1 = round(r1 - (ftr_val or 0), 2) if r1 else 0
 
-        # 자산비중
-        sp = fund.get("sp", 0)
-        bp = fund.get("bp", 0)
+        # 자산비중: DART 분석 결과 우선, 없으면 엑셀 추론값
+        dart_stock = dart.get("stock", {}).get("total")
+        dart_bond = dart.get("bond", {}).get("total")
+        sp = dart_stock if dart_stock is not None else fund.get("sp", 0)
+        bp = dart_bond if dart_bond is not None else fund.get("bp", 0)
         lp = fund.get("lp", 0)
+        if dart_stock is not None or dart_bond is not None:
+            lp = max(0, 100 - (sp or 0) - (bp or 0))
 
         record = {
             "c": company,
