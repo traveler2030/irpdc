@@ -132,6 +132,16 @@ def merge_fund_data():
                 if sibling["code"] != code:
                     children.append(sibling["code"])
 
+        # 실질수익률 (수익률 - TER)
+        r1 = fund.get("r1", 0)
+        ftr_val = fund.get("ftr") or fe.get("sharpe_3y") or 0
+        nr1 = round(r1 - (ftr_val or 0), 2) if r1 else 0
+
+        # 자산비중
+        sp = fund.get("sp", 0)
+        bp = fund.get("bp", 0)
+        lp = fund.get("lp", 0)
+
         record = {
             "c": company,
             "bn": bn,
@@ -140,11 +150,12 @@ def merge_fund_data():
             "t": fund.get("tdf", "Non-TDF"),
             "v": fund.get("vintage", 0),
             "a": fund.get("a", 0),
-            "r1": fund.get("r1", 0),
+            "r1": r1,
             "r2": fund.get("r2", 0),
             "r3": fund.get("r3", 0),
+            "nr": nr1,
             "ft2": fund.get("ft2") or fe.get("volatility_3y"),
-            "ftr": fund.get("ftr") or fe.get("sharpe_3y"),
+            "ftr": ftr_val,
             "cd": code,
             "h": hedge["type"],
             "hd": hedge.get("detail", ""),
@@ -152,6 +163,10 @@ def merge_fund_data():
             "ds": dart.get("dart_report", ""),
             "sa": dart.get("stock", {"total": None, "detail": []}),
             "ba": dart.get("bond", {"total": None, "detail": []}),
+            "sp": sp,
+            "bp": bp,
+            "lp": lp,
+            "st": fund.get("subType", ""),
             "sp2": sp2,
             "sd2": sd2,
             "sty": sty,

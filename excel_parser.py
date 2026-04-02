@@ -39,6 +39,58 @@ def _float(v):
 
 
 # ---------------------------------------------------------------------------
+# 자산비중 추론
+# ---------------------------------------------------------------------------
+
+def _infer_allocation(fund_type, name, tdf, vintage):
+    """펀드 유형과 이름에서 전형적 자산비중 추론 → (stock, bond, liquid)"""
+    import datetime
+
+    if tdf == "TDF" and vintage > 0:
+        # TDF: 빈티지에 따른 글라이드패스 추정
+        years_to_target = vintage - datetime.datetime.now().year
+        if years_to_target <= 0:
+            return (20, 70, 10)
+        elif years_to_target <= 5:
+            return (30, 60, 10)
+        elif years_to_target <= 10:
+            return (45, 48, 7)
+        elif years_to_target <= 15:
+            return (55, 40, 5)
+        elif years_to_target <= 20:
+            return (65, 30, 5)
+        else:
+            return (75, 22, 3)
+
+    if tdf == "TDF":
+        return (40, 50, 10)
+
+    if fund_type == "채권형":
+        return (0, 90, 10)
+
+    if "MMF" in fund_type or "단기금융" in fund_type:
+        return (0, 20, 80)
+
+    if fund_type == "혼합채권형":
+        return (25, 65, 10)
+
+    if fund_type == "혼합채권파생형":
+        return (20, 65, 15)
+
+    if fund_type == "재간접형":
+        if "채권혼합" in name or "채권 혼합" in name:
+            return (25, 65, 10)
+        if "채권" in name and "주식" not in name:
+            return (0, 85, 15)
+        if "혼합" in name:
+            return (30, 55, 15)
+        return (20, 60, 20)
+
+    # 폴백
+    return (30, 50, 20)
+
+
+# ---------------------------------------------------------------------------
 # 연금상품공시 파싱
 # ---------------------------------------------------------------------------
 
@@ -141,6 +193,16 @@ def parse_pension_disclosure(path):
         # subType
         sub_type = fund_type if fund_type else "Unknown"
 
+        # 자산비중: 엑셀 데이터 (있으면) 또는 유형별 추론
+        stock_pct = _float(ws.cell_value(r, 13)) if ws.ncols > 13 else 0
+        bond_pct = _float(ws.cell_value(r, 15)) if ws.ncols > 15 else 0
+        liquid_pct = _float(ws.cell_value(r, 17)) if ws.ncols > 17 else 0
+
+        if stock_pct == 0 and bond_pct == 0:
+            # 유형별 전형적 비중 추론
+            stock_pct, bond_pct, liquid_pct = _infer_allocation(
+                fund_type, name, is_tdf, vintage)
+
         funds.append({
             "name": name,
             "baseName": base_name,
@@ -155,6 +217,9 @@ def parse_pension_disclosure(path):
             "r1": r1,
             "r2": r2,
             "r3": r3,
+            "sp": round(stock_pct, 1),   # 주식비중
+            "bp": round(bond_pct, 1),    # 채권비중
+            "lp": round(liquid_pct, 1),  # 유동자산비중
         })
 
     log.info("  연금상품공시: %d개 퇴직연금 펀드 파싱", len(funds))
