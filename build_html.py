@@ -181,7 +181,48 @@ def merge_fund_data():
         }
         merged.append(record)
 
-    log.info("병합 완료: %d개 펀드", len(merged))
+    # ETF 데이터 추가
+    etf_list = load_json(BASE / "etf_list.json", [])
+    for etf in etf_list:
+        record = {
+            "c": etf.get("company", ""),
+            "bn": etf["name"],
+            "cl": "ETF",
+            "sf": etf.get("safety", "안전자산"),
+            "t": etf.get("tdf", "Non-TDF"),
+            "v": etf.get("vintage", 0),
+            "a": etf.get("a", 0),
+            "r1": etf.get("r1", 0),
+            "r2": etf.get("r2", 0),
+            "r3": etf.get("r3", 0),
+            "nr": 0,
+            "ft2": etf.get("ft2", 0),
+            "ftr": etf.get("ftr", 0),
+            "cd": etf.get("code", ""),
+            "h": etf.get("h", "미확인"),
+            "hd": etf.get("hd", ""),
+            "du": "",
+            "ds": "",
+            "sa": {"total": None, "detail": []},
+            "ba": {"total": None, "detail": []},
+            "sp": etf.get("sp", 0),
+            "bp": etf.get("bp", 0),
+            "lp": etf.get("lp", 0),
+            "st": etf.get("subType", "ETF"),
+            "sp2": etf.get("feature", ""),
+            "sd2": "",
+            "sty": "ETF",
+            "cu": "",
+            "ch": [],
+            "etf": True,
+        }
+        merged.append(record)
+
+    # ETF 포함 ID 재부여
+    for i, rec in enumerate(merged):
+        rec["id"] = i  # will be overwritten by JS but needed for consistency
+
+    log.info("병합 완료: %d개 (펀드 %d + ETF %d)", len(merged), len(merged) - len(etf_list), len(etf_list))
     return merged
 
 
