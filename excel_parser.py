@@ -308,6 +308,24 @@ def main():
 
     # 3) 필터 + ID + 저장
     log.info("[3/3] 필터링 및 저장...")
+
+    # 안전자산 편입 불가 Non-TDF 제거 (주식형, 혼합주식형, 주식파생형 등)
+    EXCLUDE_TYPES = {"주식형", "혼합주식형", "주식파생형", "혼합주식파생형"}
+    before = len(funds)
+    def _is_stock_fund(f):
+        if f["tdf"] != "Non-TDF":
+            return False
+        if f["subType"] in EXCLUDE_TYPES:
+            return True
+        # 재간접형 중 주식-재간접, 주식혼합-재간접 제거
+        if f["subType"] == "재간접형":
+            name = f["name"]
+            if re.search(r'주식.{0,3}재간접|주식혼합.{0,3}재간접', name):
+                return True
+        return False
+    funds = [f for f in funds if not _is_stock_fund(f)]
+    log.info("  안전자산 편입불가 Non-TDF 제거: %d → %d개", before, len(funds))
+
     if args.min_aum > 0:
         before = len(funds)
         funds = [f for f in funds if f["a"] >= args.min_aum]
