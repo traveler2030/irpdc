@@ -43,11 +43,18 @@ def _float(v):
 # ---------------------------------------------------------------------------
 
 def _infer_allocation(fund_type, name, tdf, vintage):
-    """펀드 유형과 이름에서 전형적 자산비중 추론 → (stock, bond, liquid)"""
+    """펀드 유형과 이름에서 자산비중 추론 → (stock, bond, liquid)"""
     import datetime
 
+    # 1) 펀드명에서 주식비중 숫자 직접 추출 (예: "퇴직연금40" → 40%, "안정30" → 30%)
+    # TDF 빈티지 숫자는 제외 (2025~2065)
+    name_pct = _extract_stock_pct_from_name(name, tdf)
+    if name_pct is not None:
+        bond = max(0, 100 - name_pct - 10)
+        return (name_pct, bond, 10)
+
+    # 2) TDF: 빈티지에 따른 글라이드패스
     if tdf == "TDF" and vintage > 0:
-        # TDF: 빈티지에 따른 글라이드패스 추정
         years_to_target = vintage - datetime.datetime.now().year
         if years_to_target <= 0:
             return (20, 70, 10)
@@ -65,6 +72,7 @@ def _infer_allocation(fund_type, name, tdf, vintage):
     if tdf == "TDF":
         return (40, 50, 10)
 
+    # 3) 유형별 기본값
     if fund_type == "채권형":
         return (0, 90, 10)
 
@@ -86,8 +94,32 @@ def _infer_allocation(fund_type, name, tdf, vintage):
             return (30, 55, 15)
         return (20, 60, 20)
 
-    # 폴백
     return (30, 50, 20)
+
+
+def _extract_stock_pct_from_name(name, tdf):
+    """펀드명에서 주식비중 숫자 추출. TDF 빈티지 숫자(2025~2065)는 제외."""
+    # "퇴직연금40", "안정30", "성장50", "밸런스40", "자산배분30" 등의 패턴
+    patterns = [
+        r'(?:퇴직연금|안정|성장|밸런스|자산배분|셀렉션|코리아|글로벌|인컴|배당|그로스|포커스|모아모아)\s*(\d{2})(?:\D|$)',
+        r'(?:40|30|20|15|10|50)(?:증권|[^\d])',  # "40증권" 패턴
+    ]
+    # 첫 번째 패턴으로 시도
+    m = re.search(patterns[0], name)
+    if m:
+        val = int(m.group(1))
+        if 10 <= val <= 80 and (tdf != "TDF" or val < 100):
+            return val
+
+    # "숫자+증권" 패턴 (TDF 아닌 경우만)
+    if tdf != "TDF":
+        m2 = re.search(r'[가-힣](\d{2})증권', name)
+        if m2:
+            val = int(m2.group(1))
+            if 10 <= val <= 80:
+                return val
+
+    return None
 
 
 # ---------------------------------------------------------------------------
