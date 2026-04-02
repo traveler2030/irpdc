@@ -345,6 +345,7 @@ def build_html(template_path, output_path, fund_data):
     html = template.replace("{{FUND_DATA}}", data_json)
     html = html.replace("{{FUND_COUNT}}", str(len(fund_data)))
     html = html.replace("{{REF_DATE}}", formatted_date)
+    html = html.replace("{{REF_DATE_RAW}}", ref_date)
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
