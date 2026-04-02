@@ -43,7 +43,20 @@ tbody tr.cr{background:#f0f2f8;border-bottom:1px solid #d8dce8}tbody tr.cr td{pa
 <div id="app"></div>
 <div class="po" id="po" onclick="CP()"><div class="pp" onclick="event.stopPropagation()"><span class="pp-x" onclick="CP()">&#10005;</span><div class="pp-t" id="pt"></div><div id="pb"></div></div></div>
 <div class="toast" id="toast"></div>
-<div class="ft">연금상품공시 + 금투협 보수 + 제로인(FundDoctor) 기반 · 투자 판단은 본인 책임</div>
+<div class="ft">
+<div style="margin-bottom:8px">연금상품공시 + 금투협 보수 + 제로인(FundDoctor) 기반 · 투자 판단은 본인 책임</div>
+<div style="margin-bottom:6px;font-size:11px;color:var(--td)">
+<strong style="color:var(--t)">데이터 출처 (KOFIA 금융투자협회)</strong>
+</div>
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:11px">
+<a href="https://dis.kofia.or.kr/websquare/index.jsp?w2xPath=/wq/cmpann/DISPension.xml&divisionId=MDIS01010001000000&serviceId=SDIS01010001000" target="_blank" rel="noopener" style="color:var(--bl);text-decoration:none">연금상품공시 (순자산/수익률)</a>
+<span style="color:var(--bd2)">|</span>
+<a href="https://dis.kofia.or.kr/websquare/index.jsp?w2xPath=/wq/fundann/DISFundFeeCMS.xml&divisionId=MDIS01005001000000&serviceId=SDIS01005001000" target="_blank" rel="noopener" style="color:var(--bl);text-decoration:none">펀드별 보수비용비교 (보수/TER)</a>
+</div>
+<div style="margin-top:6px;font-size:10px;color:var(--tm);line-height:1.6">
+연금상품종류 "퇴직연금" 선택 → 검색 → 엑셀 다운로드 · 보수비용은 기준일자 확인 후 검색 → 엑셀 다운로드
+</div>
+</div>
 <script>
 var D={{FUND_DATA}};
 var M=D.map(function(d,i){var o={id:i};for(var k in d){if(k!=='ch')o[k]=d[k];}o.children=d.ch||[];return o;});
