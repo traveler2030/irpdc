@@ -173,8 +173,8 @@ def merge_fund_data():
             "bp": bp,
             "lp": lp,
             "st": fund.get("subType", ""),
-            "sp2": sp2,
-            "sd2": sd2,
+            "sp2": _clean_description(sp2) or _generate_description(fund, sp, bp, lp, hedge["type"]),
+            "sd2": _clean_description(sd2) or _generate_description(fund, sp, bp, lp, hedge["type"]),
             "sty": sty,
             "cu": COMPANY_URLS.get(company, ""),
             "ch": children,
@@ -227,6 +227,89 @@ def merge_fund_data():
 
     log.info("병합 완료: %d개 (펀드 %d + ETF %d)", len(merged), len(merged) - len(etf_list), len(etf_list))
     return merged
+
+
+BOILERPLATE_PATTERNS = [
+    r'법\s*시행령\s*제94조[^.]*\.',
+    r'BM\(벤치마크\)은\s*제로인[^.]*\.',
+    r'제로인에서\s*제공하는[^.]*\.',
+    r'본\s*정보에\s*의존하여[^.]*\.',
+    r'데이터\s*및\s*분석자료는[^.]*\.',
+    r'그\s*정확성이나\s*완전성[^.]*\.',
+    r'무단으로\s*배포하거나\s*나\s*재활용[^.]*\.',
+    r'제로인의\s*제공내용은[^.]*\.',
+    r'단순\s*정보제공을\s*목적[^.]*\.',
+    r'특정\s*펀드에\s*대한\s*투자를\s*권고[^.]*\.',
+    r'거래를\s*목적으로\s*하지\s*않습니다[^.]*\.',
+    r'재산의\s*대부분을\s*투자하는\s*자투자신탁[^.]*\.',
+    r'주된\s*투자대상자산으로\s*하여\s*수익을\s*추구하는\s*것을\s*목적[^.]*\.',
+]
+import re as _re
+_BP_RE = [_re.compile(p) for p in BOILERPLATE_PATTERNS]
+
+
+def _clean_description(text):
+    """보일러플레이트 제거 후 유용한 내용만 반환"""
+    if not text:
+        return ""
+    for pat in _BP_RE:
+        text = pat.sub('', text)
+    text = _re.sub(r'\s+', ' ', text).strip()
+    # 너무 짧으면 무의미
+    if len(text) < 15:
+        return ""
+    return text[:300]
+
+
+def _generate_description(fund, sp, bp, lp, hedge_type):
+    """메타데이터에서 투자자 친화적 설명 자동 생성"""
+    sub_type = fund.get("subType", "")
+    tdf = fund.get("tdf", "Non-TDF")
+    vintage = fund.get("vintage", 0)
+    company = fund.get("company", "")
+
+    parts = []
+
+    # TDF 설명
+    if tdf == "TDF" and vintage:
+        parts.append(f"목표시점 {vintage}년 TDF. 은퇴 시점이 가까워질수록 주식 비중을 줄이고 채권 비중을 늘리는 글라이드패스 전략")
+
+    # 자산 구성
+    alloc_parts = []
+    if sp and sp > 0:
+        alloc_parts.append(f"주식 {sp}%")
+    if bp and bp > 0:
+        alloc_parts.append(f"채권 {bp}%")
+    if lp and lp > 0:
+        alloc_parts.append(f"유동자산 {lp}%")
+    if alloc_parts:
+        parts.append("자산배분: " + ", ".join(alloc_parts))
+
+    # 유형별 특징
+    if not parts:
+        if "채권형" == sub_type or "채권" in sub_type and "혼합" not in sub_type:
+            parts.append("채권 중심 안정형 상품. 국내외 채권에 투자하여 안정적 이자수익 추구")
+        elif "혼합채권" in sub_type:
+            parts.append("채권 위주 혼합형. 채권 중심으로 주식을 일부 편입하여 안정성과 수익성 균형 추구")
+        elif "MMF" in sub_type or "단기금융" in sub_type:
+            parts.append("단기금융상품(MMF). 초단기 채권/CP 등에 투자하여 높은 유동성과 안정적 수익 제공")
+        elif "재간접" in sub_type:
+            parts.append("재간접형(Fund of Funds). 다른 펀드에 분산 투자하여 위험을 분산")
+
+    # 환헤지
+    if hedge_type == "H":
+        parts.append("환헤지 적용 (환율 변동 위험 최소화)")
+    elif hedge_type == "UH":
+        parts.append("환노출 (달러 등 외화 자산의 환율 변동에 노출)")
+    elif hedge_type == "부분헤지":
+        parts.append("부분 환헤지 적용")
+
+    # 운용사
+    if company:
+        short_co = company.replace("자산운용", "")
+        parts.append(f"운용: {short_co}")
+
+    return ". ".join(parts) if parts else ""
 
 
 def _infer_style(name, feature, strategy, sub_type):
