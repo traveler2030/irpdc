@@ -87,7 +87,7 @@ var F={sf:{},tdf:'all',vin:'all',co:'all',h:'all',s:'',tmi:'',tma:'',sk:'a',sd:-
 STS.forEach(function(s){F.sf[s]=true;});
 function GF(){return M.filter(function(d){if(F.tab==='fund'&&d.etf)return false;if(F.tab==='etf'&&!d.etf)return false;if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});}
 function SC(s){return s==='안전자산'?'sf':s==='적격TDF'?'qt':'mx';}function SL(s){return s==='안전자산'?'안전':s==='적격TDF'?'적격TDF':'혼합';}
-function RC(v){return(v==null||v===0)?'z':v>0?'p':'ng';}function FR(v){return(v!=null&&v!==0)?v.toFixed(2)+'%':'-';}
+function RC(v){return(v==null||v===0)?'z':v>0?'p':'ng';}function FR(v,d){if(d&&d.etf&&d.days_listed&&d.days_listed<365&&d.since_listing!=null){return'<span title="상장후 '+d.days_listed+'일">'+d.since_listing.toFixed(2)+'%*<\/span>';}return(v!=null&&v!==0)?v.toFixed(2)+'%':'-';}
 function FF(v){return v>0?v.toFixed(3)+'%':'-';}function FC(v){return v<=0?'z':v<=0.4?'fl':v<=0.7?'fm':'fh';}
 function FA(v){if(v>=100000)return(v/10000).toFixed(0)+'조';if(v>=10000)return(v/10000).toFixed(1)+'조';return Math.round(v).toLocaleString();}
 function SA(k){return F.sk===k?(F.sd===1?' ▲':' ▼'):'';}
@@ -121,8 +121,8 @@ rw+='<td class="ck" onclick="event.stopPropagation();HP('+d.id+')">'+HT(d.h)+'<\
 rw+='<td class="n"><span class="ab" style="width:'+Math.max(2,d.a/mA*50)+'px"><\/span>'+FA(d.a)+'<\/td>';
 rw+='<td class="n '+FC(d.ft2)+'">'+FF(d.ft2)+'<\/td>';
 rw+='<td class="n '+FC(d.ftr)+'">'+FF(d.ftr)+'<\/td>';
-rw+='<td class="n '+RC(d.nr)+'">'+FR(d.nr)+'<\/td>';
-rw+='<td class="n '+RC(d.r1)+'">'+FR(d.r1)+'<\/td>';
+rw+='<td class="n '+RC(d.nr)+'">'+FR(d.nr,d)+'<\/td>';
+rw+='<td class="n '+RC(d.r1)+'">'+FR(d.r1,d)+'<\/td>';
 rw+='<td class="n '+RC(d.r2)+'">'+FR(d.r2)+'<\/td>';
 rw+='<td class="n '+RC(d.r3)+'">'+FR(d.r3)+'<\/td>';
 rw+='<td class="ck">'+AB(d)+'<\/td>';

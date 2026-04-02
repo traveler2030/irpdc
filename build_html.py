@@ -215,6 +215,9 @@ def merge_fund_data():
             "cu": "",
             "ch": [],
             "etf": True,
+            "days_listed": etf.get("days_listed", 0),
+            "since_listing": etf.get("since_listing"),
+            "listing_date": etf.get("listing_date", ""),
         }
         merged.append(record)
 
