@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>퇴직연금 펀드 비교기</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+:root{--bg:#0b0e1a;--bg2:#10142a;--bg3:#161b35;--bgh:#1a2248;--bd:#1e2545;--bd2:#2a3050;--t:#e0e4ef;--td:#8890aa;--tm:#555a72;--tb:#f0f2fa;--bl:#7eb8ff;--gn:#5de8a0;--am:#ffc857;--rd:#ff6b7a;--pu:#b89aff;--cy:#5dd8e8}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--t);min-height:100vh;font-size:13px}
+.hdr{background:linear-gradient(135deg,#0f1628,#1a1f3a);border-bottom:1px solid var(--bd);padding:20px 28px}.hdr h1{font-size:22px;font-weight:700;color:var(--tb)}.hdr .sub{font-size:13px;color:var(--td);margin-top:4px}
+.sb{display:flex;gap:12px;padding:14px 28px;background:var(--bg2);border-bottom:1px solid var(--bd);flex-wrap:wrap}.sc{background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;padding:8px 14px;min-width:100px}.sc .l{font-size:10px;color:var(--tm);font-weight:600}.sc .v{font-size:18px;font-weight:700;margin-top:1px}.sc .u{font-size:12px;color:var(--tm)}
+.ct{padding:14px 28px;display:flex;flex-wrap:wrap;gap:10px;background:var(--bg);border-bottom:1px solid var(--bd);align-items:flex-end}.cg{display:flex;flex-direction:column;gap:4px}.cg label{font-size:10px;color:var(--tm);font-weight:600}.cg select,.cg input{background:var(--bg3);border:1px solid var(--bd2);color:var(--t);padding:6px 8px;border-radius:6px;font-size:12px;font-family:inherit;outline:none}.cg select{min-width:110px;cursor:pointer}.cg input[type=text]{width:180px}.cg input[type=number]{width:60px;text-align:center}
+.rg{display:flex;align-items:center;gap:4px}.rg span{color:var(--tm);font-size:11px}
+.bf{display:flex;gap:5px;flex-wrap:wrap}.bd{padding:4px 10px;border-radius:16px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid transparent;user-select:none}.bd.sf{background:#132d20;color:var(--gn);border-color:#1e4a32}.bd.sf.a{border-color:var(--gn)}.bd.qt{background:#1f1535;color:var(--pu);border-color:#3a2860}.bd.qt.a{border-color:var(--pu)}.bd.mx{background:#2d2813;color:var(--am);border-color:#4a4020}.bd.mx.a{border-color:var(--am)}
+.tw{padding:0 20px 20px;overflow-x:auto;margin-top:6px}table{width:100%;border-collapse:collapse;font-size:12px}thead th{position:sticky;top:0;background:var(--bg3);color:var(--td);font-weight:600;padding:8px 6px;text-align:left;border-bottom:2px solid var(--bd2);white-space:nowrap;cursor:pointer;user-select:none;font-size:10.5px;z-index:2}thead th:hover{color:#b0b8d8}thead th.fc{color:var(--cy)}
+tbody tr.mr{border-bottom:1px solid var(--bd)}tbody tr.mr:hover{background:var(--bgh)}tbody tr.mr.hc{cursor:pointer}tbody td{padding:6px;vertical-align:middle}
+td.nc{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}td.n{text-align:right;font-variant-numeric:tabular-nums;font-family:"JetBrains Mono","Noto Sans KR",monospace;font-size:11px;font-weight:500}td.p{color:var(--gn)}td.ng{color:var(--rd)}td.z{color:var(--tm)}td.fl{color:var(--gn)}td.fm{color:var(--cy)}td.fh{color:var(--rd)}
+.tc{width:24px;text-align:center}.ch{display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;border-radius:3px;font-size:10px;color:var(--td);background:var(--bg2);border:1px solid var(--bd2)}.ch.o{transform:rotate(90deg);color:var(--bl)}.cc{font-size:9px;color:var(--tm);margin-left:1px}
+tbody tr.cr{background:#0e1228;border-bottom:1px solid #1a2248}tbody tr.cr td{padding:5px 6px;font-size:11px}.cr .nc{padding-left:30px;color:var(--td)}.cr .ct2{background:var(--bg3);border:1px solid var(--bd2);padding:1px 6px;border-radius:3px;font-size:10px;color:var(--bl);font-family:"JetBrains Mono",monospace}.ci{display:inline-block;width:16px;text-align:center;color:var(--bd2);font-size:9px}
+.st{display:inline-block;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600}.st.sf{background:#132d20;color:var(--gn)}.st.qt{background:#1f1535;color:var(--pu)}.st.mx{background:#2d2813;color:var(--am)}
+.ht{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600}.ht.h{background:#13202d;color:var(--bl)}.ht.uh{background:#2d1320;color:var(--rd)}.ht.pt{background:#2d2813;color:var(--am)}.ht.uk{color:var(--tm)}
+.vt{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;color:var(--bl);background:#13202d}.co{color:var(--td);font-size:11px;white-space:nowrap}
+.ab{display:inline-block;height:3px;border-radius:2px;background:var(--bl);vertical-align:middle;margin-right:4px}
+.ck{cursor:pointer}.ck:hover{background:rgba(126,184,255,.08);border-radius:4px}
+.lk{display:inline-block;cursor:pointer;font-size:13px;padding:2px 4px;border-radius:4px;color:var(--bl)}.lk:hover{background:#13202d;color:var(--tb)}
+.nd{text-align:center;padding:30px;color:var(--tm);font-size:14px}
+.cnt{display:flex;justify-content:space-between;align-items:center;padding:6px 28px;flex-wrap:wrap;gap:6px}.cnt .tx{font-size:11px;color:var(--tm)}.cnt .tx strong{color:var(--t)}.fn{font-size:10px;color:var(--tm)}
+.ft{padding:10px 28px;text-align:center;color:#3a4060;font-size:10px;border-top:1px solid #1a2040}
+.po{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:100;justify-content:center;align-items:center}.po.sh{display:flex}
+.pp{background:#161b35;border:1px solid var(--bd2);border-radius:12px;padding:20px 24px;max-width:520px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.pp-t{font-size:14px;font-weight:700;color:var(--tb);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)}.pp-x{float:right;cursor:pointer;color:var(--tm);font-size:18px}.pp-x:hover{color:var(--tb)}
+.pp-s{margin-bottom:14px}.pp-st{font-size:11px;font-weight:600;color:var(--td);margin-bottom:6px}
+.pp-r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1a2040}.pp-r:last-child{border-bottom:none}.pp-r .nm{color:var(--t);font-size:12px}.pp-r .pc{color:var(--bl);font-weight:600;font-size:12px;font-family:"JetBrains Mono",monospace}
+.pp-tot{display:flex;justify-content:space-between;padding:6px 0;margin-top:4px;border-top:2px solid var(--bd);font-weight:700}.pp-tot .nm{color:var(--tb);font-size:13px}.pp-tot .pc{color:var(--am);font-size:13px;font-family:"JetBrains Mono",monospace}
+.pp-e{color:var(--tm);font-size:12px;font-style:italic}
+.btn{display:inline-block;margin-top:10px;padding:5px 12px;border:1px solid var(--bd2);border-radius:6px;font-size:12px;cursor:pointer;text-decoration:none;margin-right:6px}
+.btn-bl{color:var(--bl);border-color:#1e3a4a}.btn-bl:hover{background:#13202d}.btn-gn{color:var(--gn);border-color:#1e4a32}.btn-gn:hover{background:#132d20}
+.si-box{background:#0e1228;border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:14px}
+.si-row{display:flex;gap:8px;margin-bottom:5px;font-size:12px}.si-lbl{color:var(--td);min-width:55px;font-weight:600;flex-shrink:0}.si-val{color:var(--t)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e4a32;color:var(--gn);padding:10px 20px;border-radius:8px;font-size:13px;z-index:200;display:none}
+.cd-cell{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--cy);cursor:pointer;white-space:nowrap}.cd-cell:hover{text-decoration:underline}
+.note{padding:4px 28px;font-size:10px;color:var(--tm);background:var(--bg)}
+</style></head><body>
+<div class="hdr"><h1>퇴직연금 펀드 스크리너</h1><div class="sub">순자산 50억+ | {{FUND_COUNT}}개 펀드 | {{REF_DATE}} 기준</div></div>
+<div id="app"></div>
+<div class="po" id="po" onclick="CP()"><div class="pp" onclick="event.stopPropagation()"><span class="pp-x" onclick="CP()">&#10005;</span><div class="pp-t" id="pt"></div><div id="pb"></div></div></div>
+<div class="toast" id="toast"></div>
+<div class="ft">연금상품공시 + 금투협 보수 + 제로인(FundDoctor) 기반 · 투자 판단은 본인 책임</div>
+<script>
+var D={{FUND_DATA}};
+var M=D.map(function(d,i){var o={id:i};for(var k in d){if(k!=='ch')o[k]=d[k];}o.children=d.ch||[];return o;});
+var mA=Math.max.apply(null,M.map(function(d){return d.a;}));var EX={};
+var STS=['안전자산','적격TDF','판단필요(혼합)','판단필요(혼합자산)'];
+var F={sf:{},tdf:'all',vin:'all',co:'all',h:'all',s:'',tmi:'',tma:'',sk:'a',sd:-1};
+STS.forEach(function(s){F.sf[s]=true;});
+function GF(){return M.filter(function(d){if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});}
+function SC(s){return s==='안전자산'?'sf':s==='적격TDF'?'qt':'mx';}function SL(s){return s==='안전자산'?'안전':s==='적격TDF'?'적격TDF':'혼합';}
+function RC(v){return(v==null||v===0)?'z':v>0?'p':'ng';}function FR(v){return(v!=null&&v!==0)?v.toFixed(2)+'%':'-';}
+function FF(v){return v>0?v.toFixed(3)+'%':'-';}function FC(v){return v<=0?'z':v<=0.4?'fl':v<=0.7?'fm':'fh';}
+function FA(v){if(v>=100000)return(v/10000).toFixed(0)+'조';if(v>=10000)return(v/10000).toFixed(1)+'조';return Math.round(v).toLocaleString();}
+function SA(k){return F.sk===k?(F.sd===1?' ▲':' ▼'):'';}
+function HT(h){if(h==='H')return'<span class="ht h">H<\/span>';if(h==='UH')return'<span class="ht uh">UH<\/span>';if(h==='부분헤지')return'<span class="ht pt">부분<\/span>';return'<span class="ht uk">-<\/span>';}
+function AL(a){if(!a)return'-';var t=a.total,d=a.detail||[];if(t==null&&d.length===0)return'-';var l=t!=null?t+'%':'?';if(d.length>0)l+=' ⓘ';return l;}
+function CP(){document.getElementById('po').classList.remove('sh');}
+function OP(t,b){document.getElementById('pt').textContent=t;document.getElementById('pb').innerHTML=b;document.getElementById('po').classList.add('sh');}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+function copyCode(c){if(navigator.clipboard){navigator.clipboard.writeText(c).then(function(){toast(c+' 복사됨');});}else{var ta=document.createElement('textarea');ta.value=c;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast(c+' 복사됨');}}
+function searchDart(i){var d=M[i];window.open('https://www.google.com/search?q='+encodeURIComponent(d.bn.substring(0,30)+' 투자설명서'),'_blank');}
+function exportCSV(){var fl=GF();var hdr=['분류','코드','펀드명','운용사','TDF','빈티지','환헤지','순자산(억)','총보수(%)','TER(%)','1Y(%)','2Y(%)','3Y(%)','주식비중(%)','채권비중(%)'];var rows=[hdr.join(',')];for(var i=0;i<fl.length;i++){var d=fl[i];var row=['"'+d.sf+'"',d.cd,'"'+d.bn.replace(/"/g,'""')+'"','"'+d.c+'"',d.t,d.v||'',d.h,d.a||'',d.ft2!=null?d.ft2:'',d.ftr!=null?d.ftr:'',d.r1||'',d.r2||'',d.r3||'',d.sa&&d.sa.total!=null?d.sa.total:'',d.ba&&d.ba.total!=null?d.ba.total:''];rows.push(row.join(','));}var csv='\uFEFF'+rows.join('\n');var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='pension_funds_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(url);toast(fl.length+'개 펀드 CSV 다운로드');}
+function SP(i){var d=M[i],h='<div class="si-box">';h+='<div class="si-row"><span class="si-lbl">파트너사<\/span><span class="si-val">'+(d.sp2||'-')+'<\/span><\/div>';if(d.sty)h+='<div class="si-row"><span class="si-lbl">스타일<\/span><span class="si-val">'+d.sty+'<\/span><\/div>';h+='<div class="si-row"><span class="si-lbl">상품코드<\/span><span class="si-val cd-cell" onclick="copyCode(\x27'+d.cd+'\x27)">'+d.cd+' 📋<\/span><\/div>';h+='<div class="si-row" style="margin-top:6px"><span class="si-val">'+(d.sd2||'')+'<\/span><\/div><\/div>';if(d.ds)h+='<div class="pp-s"><div class="pp-st">투자설명서 요약 (제로인)<\/div><div style="color:var(--t);font-size:12px;line-height:1.6">'+d.ds+'<\/div><\/div>';h+='<div style="margin-top:12px">';if(d.cu)h+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="btn btn-gn">🏢 운용사 펀드 페이지<\/a>';h+='<span class="btn btn-bl" onclick="searchDart('+d.id+')">🔍 투자설명서 검색<\/span>';h+='<\/div>';OP(d.bn.substring(0,50),h);}
+function AP(i,type){var d=M[i];var tm={stock:'주식',bond:'채권'};var am={stock:d.sa,bond:d.ba};var a=am[type];var h='';if(!a||(a.total==null&&(!a.detail||a.detail.length===0))){h='<div class="pp-e">세부 내역을 확인할 수 없습니다.<\/div>';}else{if(a.detail&&a.detail.length>0){h+='<div class="pp-s"><div class="pp-st">세부 내역<\/div>';for(var j=0;j<a.detail.length;j++){h+='<div class="pp-r"><span class="nm">'+a.detail[j].name+'<\/span><span class="pc">'+a.detail[j].pct+'%<\/span><\/div>';}h+='<\/div>';}if(a.total!=null)h+='<div class="pp-tot"><span class="nm">총 비중<\/span><span class="pc">'+a.total+'%<\/span><\/div>';}h+='<div style="margin-top:12px">';if(d.cu)h+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="btn btn-gn">🏢 운용사에서 확인<\/a>';h+='<\/div>';OP(d.bn.substring(0,50)+' — '+tm[type],h);}
+function HP(i){var d=M[i];var hm={'H':'환헤지(H)','UH':'환노출(UH)','부분헤지':'부분헤지','미확인':'미확인'};var h='<div style="font-size:13px;line-height:1.5"><strong>분류:<\/strong> '+(hm[d.h]||d.h)+'<br>';if(d.hd)h+='<strong>상세:<\/strong> '+d.hd+'<br>';h+='<\/div>';OP(d.bn.substring(0,50)+' — 환헤지',h);}
+function TE(i){if(EX[i])delete EX[i];else EX[i]=true;R();}
+function R(){var fl=GF(),app=document.getElementById('app');var vR=fl.filter(function(d){return d.r1&&d.r1!==0;}),aR=vR.length?vR.reduce(function(s,d){return s+d.r1;},0)/vR.length:0;var tA=fl.reduce(function(s,d){return s+(d.a||0);},0);var sc=fl.filter(function(d){return d.sf==='안전자산';}).length;var qc=fl.filter(function(d){return d.sf==='적격TDF';}).length;var vT=fl.filter(function(d){return d.ftr>0;});var aT=vT.length?vT.reduce(function(s,d){return s+d.ftr;},0)/vT.length:0;var cos=[];M.forEach(function(d){if(cos.indexOf(d.c)<0)cos.push(d.c);});cos.sort();var vins=[];M.forEach(function(d){if(d.v>0&&vins.indexOf(d.v)<0)vins.push(d.v);});vins.sort(function(a,b){return a-b;});var sC={};STS.forEach(function(s){sC[s]=M.filter(function(d){return d.sf===s;}).length;});var e='<td><\/td>';var rw='';
+if(fl.length===0){rw='<tr><td colspan="17" class="nd">조건에 맞는 상품이 없습니다<\/td><\/tr>';}
+else{for(var idx=0;idx<fl.length;idx++){var d=fl[idx];var hk=d.children.length>0,io=!!EX[d.id];
+rw+='<tr class="mr'+(hk?' hc':'')+'"'+(hk?' onclick="TE('+d.id+')"':'')+'>';
+rw+='<td class="tc">'+(hk?'<span class="ch'+(io?' o':'')+'">▶<\/span><span class="cc">'+(d.children.length+1)+'<\/span>':'')+'<\/td>';
+rw+='<td><span class="st '+SC(d.sf)+'">'+SL(d.sf)+'<\/span><\/td>';
+rw+='<td class="cd-cell" onclick="event.stopPropagation();copyCode(\x27'+d.cd+'\x27)" title="클릭시 복사">'+d.cd+'<\/td>';
+rw+='<td class="nc">'+d.bn+'<\/td>';
+rw+='<td class="co">'+d.c.replace('자산운용','')+'<\/td>';
+rw+='<td>'+(d.v>0?'<span class="vt">'+d.v+'<\/span>':'-')+'<\/td>';
+rw+='<td class="ck" onclick="event.stopPropagation();HP('+d.id+')">'+HT(d.h)+'<\/td>';
+rw+='<td class="n"><span class="ab" style="width:'+Math.max(2,d.a/mA*50)+'px"><\/span>'+FA(d.a)+'<\/td>';
+rw+='<td class="n '+FC(d.ft2)+'">'+FF(d.ft2)+'<\/td>';
+rw+='<td class="n '+FC(d.ftr)+'">'+FF(d.ftr)+'<\/td>';
+rw+='<td class="n '+RC(d.r1)+'">'+FR(d.r1)+'<\/td>';
+rw+='<td class="n '+RC(d.r2)+'">'+FR(d.r2)+'<\/td>';
+rw+='<td class="n '+RC(d.r3)+'">'+FR(d.r3)+'<\/td>';
+rw+='<td class="n ck" onclick="event.stopPropagation();AP('+d.id+',\x27stock\x27)">'+AL(d.sa)+'<\/td>';
+rw+='<td class="n ck" onclick="event.stopPropagation();AP('+d.id+',\x27bond\x27)">'+AL(d.ba)+'<\/td>';
+rw+='<td class="ck" onclick="event.stopPropagation();SP('+d.id+')" style="color:var(--td);font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(d.sp2?d.sp2.substring(0,15):'-')+'<\/td>';
+rw+='<td style="text-align:center">';
+if(d.cu)rw+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="lk" onclick="event.stopPropagation()" title="운용사">🏢<\/a>';
+rw+='<span class="lk" onclick="event.stopPropagation();searchDart('+d.id+')" title="투자설명서 검색">🔍<\/span>';
+rw+='<\/td><\/tr>';
+if(hk&&io){rw+='<tr class="cr">'+e+e+e+'<td class="nc"><span class="ci">├<\/span><span class="ct2">'+(d.cl||'기본')+'<\/span> 대표<\/td>'+e+e+e+'<td class="n">'+FA(d.a)+'<\/td>'+e+e+'<td class="n '+RC(d.r1)+'">'+FR(d.r1)+'<\/td><td class="n '+RC(d.r2)+'">'+FR(d.r2)+'<\/td><td class="n '+RC(d.r3)+'">'+FR(d.r3)+'<\/td>'+e+e+e+e+'<\/tr>';
+for(var ci=0;ci<d.children.length;ci++){var c=d.children[ci],la=ci===d.children.length-1;rw+='<tr class="cr">'+e+e+e+'<td class="nc"><span class="ci">'+(la?'└':'├')+'<\/span><span class="ct2">'+(c.cl||'기본')+'<\/span><\/td>'+e+e+e+'<td class="n">'+FA(c.a)+'<\/td>'+e+e+'<td class="n '+RC(c.r1)+'">'+FR(c.r1)+'<\/td><td class="n '+RC(c.r2)+'">'+FR(c.r2)+'<\/td><td class="n '+RC(c.r3)+'">'+FR(c.r3)+'<\/td>'+e+e+e+e+'<\/tr>';}}}}
+var h='<div class="sb"><div class="sc"><div class="l">펀드<\/div><div class="v" style="color:var(--tb)">'+fl.length+'<span class="u">개<\/span><\/div><\/div><div class="sc"><div class="l">안전<\/div><div class="v" style="color:var(--gn)">'+sc+'<span class="u">개<\/span><\/div><\/div><div class="sc"><div class="l">적격TDF<\/div><div class="v" style="color:var(--pu)">'+qc+'<span class="u">개<\/span><\/div><\/div><div class="sc"><div class="l">평균TER<\/div><div class="v" style="color:var(--cy)">'+aT.toFixed(3)+'%<\/div><\/div><div class="sc"><div class="l">평균1Y<\/div><div class="v" style="color:'+(aR>=0?'var(--gn)':'var(--rd)')+'">'+aR.toFixed(2)+'%<\/div><\/div><div class="sc"><div class="l">총순자산<\/div><div class="v" style="color:var(--am)">'+(tA/10000).toFixed(1)+'<span class="u">조<\/span><\/div><\/div><\/div>';
+h+='<div class="ct"><div class="cg"><label>안전분류<\/label><div class="bf">';STS.forEach(function(s){var cls=SC(s),act=F.sf[s]?' a':'';h+='<span class="bd '+cls+act+'" data-sf="'+s+'">'+SL(s)+' ('+sC[s]+')<\/span>';});h+='<\/div><\/div>';
+h+='<div class="cg"><label>TDF<\/label><select id="f1"><option value="all">전체<\/option><option value="TDF"'+(F.tdf==='TDF'?' selected':'')+'>TDF<\/option><option value="Non-TDF"'+(F.tdf==='Non-TDF'?' selected':'')+'>Non-TDF<\/option><\/select><\/div>';
+h+='<div class="cg"><label>빈티지<\/label><select id="f2"><option value="all">전체<\/option>';vins.forEach(function(v){h+='<option value="'+v+'"'+(F.vin==v?' selected':'')+'>'+v+'<\/option>';});h+='<\/select><\/div>';
+h+='<div class="cg"><label>환<\/label><select id="f3"><option value="all">전체<\/option><option value="H">H<\/option><option value="UH">UH<\/option><option value="부분헤지">부분<\/option><option value="미확인">미확인<\/option><\/select><\/div>';
+h+='<div class="cg"><label>운용사<\/label><select id="f4"><option value="all">전체('+cos.length+')<\/option>';cos.forEach(function(c){h+='<option value="'+c+'"'+(F.co===c?' selected':'')+'>'+c.replace('자산운용','')+'<\/option>';});h+='<\/select><\/div>';
+h+='<div class="cg"><label>TER(%)<\/label><div class="rg"><input type="number" id="f5" step="0.1" placeholder="min" value="'+F.tmi+'"><span>~<\/span><input type="number" id="f6" step="0.1" placeholder="max" value="'+F.tma+'"><\/div><\/div>';
+h+='<div class="cg"><label>검색<\/label><input type="text" id="f7" placeholder="펀드명/운용사/코드" value="'+F.s+'"><\/div><\/div>';
+h+='<div class="note">※ 수익률(1Y/2Y/3Y)은 <strong>연평균(CAGR)<\/strong> 기준입니다. 운용사 홈페이지의 누적 수익률과 다를 수 있습니다. | 상품코드 클릭 시 복사됩니다.<\/div>';
+h+='<div class="cnt"><div class="tx"><strong>'+fl.length+'<\/strong>개 · ▶클래스 · 셀 클릭→팝업 · 🏢운용사 · 🔍투자설명서<\/div><div><span class="btn btn-bl" onclick="exportCSV()" style="font-size:11px;padding:3px 10px">📥 CSV 내보내기<\/span><\/div><\/div>';
+h+='<div class="tw"><table><thead><tr><th style="width:24px;cursor:default"><\/th><th data-s="sf">분류'+SA('sf')+'<\/th><th data-s="cd">코드'+SA('cd')+'<\/th><th data-s="bn">펀드명'+SA('bn')+'<\/th><th data-s="c">운용사'+SA('c')+'<\/th><th data-s="v">빈티지'+SA('v')+'<\/th><th data-s="h">환'+SA('h')+'<\/th><th data-s="a">순자산'+SA('a')+'<\/th><th data-s="ft2" class="fc">총보수'+SA('ft2')+'<\/th><th data-s="ftr" class="fc">TER'+SA('ftr')+'<\/th><th data-s="r1">1Y'+SA('r1')+'<\/th><th data-s="r2">2Y'+SA('r2')+'<\/th><th data-s="r3">3Y'+SA('r3')+'<\/th><th>주식<\/th><th>채권<\/th><th>소개<\/th><th>링크<\/th><\/tr><\/thead><tbody>'+rw+'<\/tbody><\/table><\/div>';
+app.innerHTML=h;
+document.querySelectorAll('.bd').forEach(function(b){b.addEventListener('click',function(){var s=b.getAttribute('data-sf');F.sf[s]=!F.sf[s];R();});});
+document.getElementById('f1').addEventListener('change',function(ev){F.tdf=ev.target.value;R();});
+document.getElementById('f2').addEventListener('change',function(ev){F.vin=ev.target.value;R();});
+document.getElementById('f3').addEventListener('change',function(ev){F.h=ev.target.value;R();});
+document.getElementById('f4').addEventListener('change',function(ev){F.co=ev.target.value;R();});
+document.getElementById('f5').addEventListener('change',function(ev){F.tmi=ev.target.value;R();});
+document.getElementById('f6').addEventListener('change',function(ev){F.tma=ev.target.value;R();});
+var sT;document.getElementById('f7').addEventListener('input',function(ev){clearTimeout(sT);sT=setTimeout(function(){F.s=ev.target.value;R();},200);});
+document.querySelectorAll('thead th[data-s]').forEach(function(th){th.addEventListener('click',function(){var k=th.getAttribute('data-s');if(F.sk===k)F.sd*=-1;else{F.sk=k;F.sd=(k==='bn'||k==='c'||k==='sf'||k==='h'||k==='cd')?1:-1;}R();});});
+}
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')CP();});
+R();
+</script></body></html>

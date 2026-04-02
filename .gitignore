@@ -1,0 +1,35 @@
+# Cache directories
+dart_cache/
+funddoctor_cache/
+funetf_cache/
+
+# Excel source files
+*.xls
+*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Partial/temp files
+funetf_partial.json
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Plan (dev only)
+PLAN.md
+
+# Claude
+.claude/

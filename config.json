@@ -1,0 +1,28 @@
+{
+  "reference_date": "20260323",
+  "api_delay": {
+    "dart": 0.5,
+    "funddoctor": 1.0,
+    "funetf": 0.5
+  },
+  "retry": {
+    "max_attempts": 3,
+    "backoff_base": 2
+  },
+  "cache_dirs": {
+    "dart": "dart_cache",
+    "funddoctor": "funddoctor_cache",
+    "funetf": "funetf_cache"
+  },
+  "excel_files": {
+    "pension_disclosure": "연금상품공시.xls",
+    "fee_comparison": "펀드별보수비용비교.xls"
+  },
+  "output": {
+    "fund_list": "fund_list_for_dart.json",
+    "dart_results": "dart_parsed_results.json",
+    "funddoctor_results": "funddoctor_results.json",
+    "funetf_results": "funetf_results.json",
+    "html": "index.html"
+  }
+}
