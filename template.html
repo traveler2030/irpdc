@@ -53,6 +53,12 @@ tbody tr.cr{background:#f0f2f8;border-bottom:1px solid #d8dce8}tbody tr.cr td{pa
 .etf-tag{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700;background:#ff8c00;color:#fff;margin-left:4px;vertical-align:middle}
 .rec-box{padding:10px 28px;background:#eef6ff;border-bottom:1px solid var(--bd);font-size:12px;color:var(--t);line-height:1.6}
 .rec-box strong{color:var(--bl)}
+.tab-bar{display:flex;padding:0 28px;background:var(--bg2);border-bottom:1px solid var(--bd)}
+.tab-btn{padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--td);border-bottom:2px solid transparent;font-family:inherit}
+.tab-btn:hover{color:var(--t)}
+.tab-btn.active{color:var(--bl);border-bottom-color:var(--bl)}
+.tab-btn .cnt-badge{font-size:10px;background:var(--bd);color:var(--td);padding:1px 6px;border-radius:8px;margin-left:4px}
+.tab-btn.active .cnt-badge{background:var(--bl);color:#fff}
 </style></head><body>
 <div class="hdr"><h1>DC/IRP 안전자산 30% 펀드 스크리너</h1><div class="sub">안전자산 편입 가능 상품만 · 순자산 50억+ · {{FUND_COUNT}}개 펀드 · {{REF_DATE}} 기준</div></div>
 <div id="app"></div>
@@ -77,9 +83,9 @@ var D={{FUND_DATA}};
 var M=D.map(function(d,i){var o={id:i};for(var k in d){if(k!=='ch')o[k]=d[k];}o.children=d.ch||[];return o;});
 var mA=Math.max.apply(null,M.map(function(d){return d.a;}));var EX={};
 var STS=['안전자산','적격TDF'];
-var F={sf:{},tdf:'all',vin:'all',co:'all',h:'all',s:'',tmi:'',tma:'',sk:'a',sd:-1};
+var F={sf:{},tdf:'all',vin:'all',co:'all',h:'all',s:'',tmi:'',tma:'',sk:'a',sd:-1,tab:'fund'};
 STS.forEach(function(s){F.sf[s]=true;});
-function GF(){return M.filter(function(d){if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});}
+function GF(){return M.filter(function(d){if(F.tab==='fund'&&d.etf)return false;if(F.tab==='etf'&&!d.etf)return false;if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});}
 function SC(s){return s==='안전자산'?'sf':s==='적격TDF'?'qt':'mx';}function SL(s){return s==='안전자산'?'안전':s==='적격TDF'?'적격TDF':'혼합';}
 function RC(v){return(v==null||v===0)?'z':v>0?'p':'ng';}function FR(v){return(v!=null&&v!==0)?v.toFixed(2)+'%':'-';}
 function FF(v){return v>0?v.toFixed(3)+'%':'-';}function FC(v){return v<=0?'z':v<=0.4?'fl':v<=0.7?'fm':'fh';}
@@ -139,6 +145,8 @@ h+=TOPCARD('최저 보수(TER) TOP',topLowFee,function(d){return d.ftr.toFixed(3
 h+='<\/div>';
 var bestNR=fl.filter(function(d){return d.nr&&d.nr>0;}).sort(function(a,b){return b.nr-a.nr;})[0];
 if(bestNR){h+='<div class="rec-box">추천: <strong>'+bestNR.bn.substring(0,40)+'<\/strong> — 실질수익률 '+(bestNR.nr>0?'+':'')+bestNR.nr.toFixed(2)+'% (수익률 '+bestNR.r1.toFixed(2)+'% - TER '+bestNR.ftr.toFixed(3)+'%), 순자산 '+FA(bestNR.a)+'억<\/div>';}
+var nFund=M.filter(function(d){return !d.etf;}).length;var nETF=M.filter(function(d){return !!d.etf;}).length;
+h+='<div class="tab-bar"><button class="tab-btn'+(F.tab==='fund'?' active':'')+'" onclick="F.tab=\'fund\';R()">펀드<span class="cnt-badge">'+nFund+'<\/span><\/button><button class="tab-btn'+(F.tab==='etf'?' active':'')+'" onclick="F.tab=\'etf\';R()">ETF<span class="cnt-badge">'+nETF+'<\/span><\/button><button class="tab-btn'+(F.tab==='all'?' active':'')+'" onclick="F.tab=\'all\';R()">전체<span class="cnt-badge">'+(nFund+nETF)+'<\/span><\/button><\/div>';
 h+='<div class="ct"><div class="cg"><label>안전분류<\/label><div class="bf">';STS.forEach(function(s){var cls=SC(s),act=F.sf[s]?' a':'';h+='<span class="bd '+cls+act+'" data-sf="'+s+'">'+SL(s)+' ('+sC[s]+')<\/span>';});h+='<\/div><\/div>';
 h+='<div class="cg"><label>TDF<\/label><select id="f1"><option value="all">전체<\/option><option value="TDF"'+(F.tdf==='TDF'?' selected':'')+'>TDF<\/option><option value="Non-TDF"'+(F.tdf==='Non-TDF'?' selected':'')+'>Non-TDF<\/option><\/select><\/div>';
 h+='<div class="cg"><label>빈티지<\/label><select id="f2"><option value="all">전체<\/option>';vins.forEach(function(v){h+='<option value="'+v+'"'+(F.vin==v?' selected':'')+'>'+v+'<\/option>';});h+='<\/select><\/div>';
