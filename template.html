@@ -39,7 +39,7 @@ tbody tr.cr{background:#f0f2f8;border-bottom:1px solid #d8dce8}tbody tr.cr td{pa
 .cd-cell{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--cy);cursor:pointer;white-space:nowrap}.cd-cell:hover{text-decoration:underline}
 .note{padding:4px 28px;font-size:10px;color:var(--tm);background:var(--bg)}
 </style></head><body>
-<div class="hdr"><h1>퇴직연금 펀드 스크리너</h1><div class="sub">순자산 50억+ | {{FUND_COUNT}}개 펀드 | {{REF_DATE}} 기준</div></div>
+<div class="hdr"><h1>DC/IRP 안전자산 30% 펀드 스크리너</h1><div class="sub">안전자산 편입 가능 상품만 · 순자산 50억+ · {{FUND_COUNT}}개 펀드 · {{REF_DATE}} 기준</div></div>
 <div id="app"></div>
 <div class="po" id="po" onclick="CP()"><div class="pp" onclick="event.stopPropagation()"><span class="pp-x" onclick="CP()">&#10005;</span><div class="pp-t" id="pt"></div><div id="pb"></div></div></div>
 <div class="toast" id="toast"></div>
@@ -61,7 +61,7 @@ tbody tr.cr{background:#f0f2f8;border-bottom:1px solid #d8dce8}tbody tr.cr td{pa
 var D={{FUND_DATA}};
 var M=D.map(function(d,i){var o={id:i};for(var k in d){if(k!=='ch')o[k]=d[k];}o.children=d.ch||[];return o;});
 var mA=Math.max.apply(null,M.map(function(d){return d.a;}));var EX={};
-var STS=['안전자산','적격TDF','판단필요(혼합)','판단필요(혼합자산)'];
+var STS=['안전자산','적격TDF'];
 var F={sf:{},tdf:'all',vin:'all',co:'all',h:'all',s:'',tmi:'',tma:'',sk:'a',sd:-1};
 STS.forEach(function(s){F.sf[s]=true;});
 function GF(){return M.filter(function(d){if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});}

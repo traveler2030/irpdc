@@ -112,16 +112,6 @@ def parse_pension_disclosure(path):
         )
         cl = cls_match.group(0).strip() if cls_match else ""
 
-        # safety 분류
-        if "채권" in fund_type and "혼합" not in fund_type:
-            safety = "안전자산"
-        elif "TDF" in name.upper() and ("주식혼합" in fund_type or "혼합주식" in fund_type):
-            safety = "적격TDF"
-        elif "혼합자산" in fund_type or "혼합자산" in name:
-            safety = "판단필요(혼합자산)"
-        else:
-            safety = "판단필요(혼합)"
-
         # TDF
         is_tdf = "TDF" if "TDF" in name.upper() or "타겟데이트" in name else "Non-TDF"
 
@@ -131,6 +121,22 @@ def parse_pension_disclosure(path):
             vm = re.search(r'(?:TDF|타겟데이트)\s*(\d{4})', name, re.IGNORECASE)
             if vm:
                 vintage = int(vm.group(1))
+
+        # safety 분류 (DC/IRP 안전자산 30% 룰 기준)
+        if is_tdf == "TDF":
+            safety = "적격TDF"
+        elif fund_type in ("채권형",) or ("채권" in fund_type and "혼합" not in fund_type):
+            safety = "안전자산"
+        elif "MMF" in fund_type or "단기금융" in fund_type:
+            safety = "안전자산"
+        elif fund_type in ("혼합채권형", "혼합채권파생형"):
+            safety = "안전자산"
+        elif fund_type == "재간접형" and re.search(r'채권.{0,5}재간접|채권혼합.{0,5}재간접', name):
+            safety = "안전자산"
+        elif fund_type == "재간접형" and re.search(r'혼합.{0,5}재간접', name) and "주식" not in name[:15]:
+            safety = "안전자산"
+        else:
+            safety = "편입불가"
 
         # subType
         sub_type = fund_type if fund_type else "Unknown"
@@ -309,22 +315,10 @@ def main():
     # 3) 필터 + ID + 저장
     log.info("[3/3] 필터링 및 저장...")
 
-    # 안전자산 편입 불가 Non-TDF 제거 (주식형, 혼합주식형, 주식파생형 등)
-    EXCLUDE_TYPES = {"주식형", "혼합주식형", "주식파생형", "혼합주식파생형"}
+    # 안전자산 30% 룰 편입불가 상품 제거
     before = len(funds)
-    def _is_stock_fund(f):
-        if f["tdf"] != "Non-TDF":
-            return False
-        if f["subType"] in EXCLUDE_TYPES:
-            return True
-        # 재간접형 중 주식-재간접, 주식혼합-재간접 제거
-        if f["subType"] == "재간접형":
-            name = f["name"]
-            if re.search(r'주식.{0,3}재간접|주식혼합.{0,3}재간접', name):
-                return True
-        return False
-    funds = [f for f in funds if not _is_stock_fund(f)]
-    log.info("  안전자산 편입불가 Non-TDF 제거: %d → %d개", before, len(funds))
+    funds = [f for f in funds if f["safety"] != "편입불가"]
+    log.info("  안전자산 편입불가 제거: %d → %d개", before, len(funds))
 
     if args.min_aum > 0:
         before = len(funds)
