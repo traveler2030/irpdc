@@ -77,6 +77,14 @@ def merge_fund_data():
     # 4) FunETF 결과
     fe_data = load_json(BASE / output_cfg.get("funetf_results", "funetf_results.json"))
 
+    # 5) 설정일 매핑
+    import os
+    dates_path = BASE / "_setting_dates.json"
+    setting_dates = {}
+    if dates_path.exists():
+        with open(dates_path, "r", encoding="utf-8") as f:
+            setting_dates = json.load(f)
+
     log.info("데이터 소스: 펀드목록=%d, DART=%d, FundDoctor=%d, FunETF=%d",
              len(fund_list), len(dart_data), len(fd_data), len(fe_data))
 
@@ -176,6 +184,7 @@ def merge_fund_data():
             "sp2": _clean_description(sp2) or _generate_description(fund, sp, bp, lp, hedge["type"]),
             "sd2": _clean_description(sd2) or _generate_description(fund, sp, bp, lp, hedge["type"]),
             "sty": sty,
+            "sd": setting_dates.get(fund.get("name", ""), ""),
             "cu": COMPANY_URLS.get(company, ""),
             "ch": children,
         }

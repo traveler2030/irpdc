@@ -74,6 +74,14 @@ tbody tr.cr{background:#f0f2f8;border-bottom:1px solid #d8dce8}tbody tr.cr td{pa
 .cmp-row{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;border-bottom:1px solid var(--bd)}.cmp-row:last-child{border:none}
 .date-warn{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-left:6px}
 .date-ok{background:#e0f5ec;color:var(--gn)}.date-old{background:#ffeeba;color:#b87a00}.date-stale{background:#f8dce0;color:var(--rd)}
+.tag{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:500;margin-left:3px;vertical-align:middle}
+.tag-g{background:#e0f5ec;color:#0d8050}.tag-b{background:#dce8f8;color:#2a6cdb}.tag-r{background:#f8dce0;color:#d03040}.tag-y{background:#faf0d8;color:#b87a00}
+.bm-btn{cursor:pointer;font-size:14px;opacity:.3;vertical-align:middle}.bm-btn:hover{opacity:.7}.bm-btn.on{opacity:1}
+.sim-box{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-top:10px}
+.sim-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.sim-slider{flex:1;cursor:pointer}
+.similar-card{display:inline-block;padding:6px 10px;margin:2px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;font-size:11px;cursor:pointer;color:var(--t)}
+.similar-card:hover{border-color:var(--bl)}
 @media(max-width:768px){.sb{flex-direction:column;padding:10px 12px}.sc{min-width:auto;flex:1}.ct{padding:8px 12px}.tw{padding:0 4px 10px}.hdr{padding:12px 16px}.hdr h1{font-size:16px}.top-section{padding:8px 12px;flex-direction:column}.preset-bar{padding:6px 12px}.cnt{padding:4px 12px}table{font-size:10px}thead th{font-size:9px;padding:6px 3px}tbody td{padding:4px 3px}.note{padding:2px 12px}td.nc{max-width:140px}.co{font-size:9px}.cmp-bar{padding:8px 12px}}
 </style></head><body>
 <div class="hdr"><h1>DC/IRP 안전자산 30% 펀드 스크리너</h1><div class="sub">안전자산 편입 가능 상품만 · 순자산 50억+ · {{FUND_COUNT}}개 펀드 · <span id="dateInfo">{{REF_DATE}} 기준</span></div></div>
@@ -106,9 +114,25 @@ function daysAgo(){var p=REF_DATE.match(/(\d{4})(\d{2})(\d{2})/);if(!p)return 0;
 function toggleCmp(id){if(CMP[id]){delete CMP[id];}else{if(Object.keys(CMP).length>=3){toast('최대 3개까지 비교 가능');return;}CMP[id]=true;}R();}
 function clearCmp(){CMP={};R();}
 function showCmpPanel(){var ids=Object.keys(CMP).map(Number);if(ids.length<2){toast('2개 이상 선택해주세요');return;}var ds=ids.map(function(id){return M[id];});var h='<div class="cmp-panel">';for(var i=0;i<ds.length;i++){var d=ds[i];h+='<div class="cmp-col"><h4>'+d.bn.substring(0,25)+(d.etf?' [ETF]':'')+'<\/h4>';h+='<div class="cmp-row"><span>유형<\/span><span>'+d.st+'<\/span><\/div>';h+='<div class="cmp-row"><span>환헤지<\/span><span>'+d.h+'<\/span><\/div>';h+='<div class="cmp-row"><span>순자산<\/span><span>'+FA(d.a)+'억<\/span><\/div>';h+='<div class="cmp-row"><span>TER<\/span><span>'+(d.ftr?d.ftr.toFixed(3)+'%':'-')+'<\/span><\/div>';h+='<div class="cmp-row"><span>실질1Y<\/span><span style="color:'+(d.nr>0?'var(--gn)':'var(--rd)'+'">'+(d.nr?d.nr.toFixed(2)+'%':'-'))+'<\/span><\/div>';h+='<div class="cmp-row"><span>1Y<\/span><span>'+(d.r1?d.r1.toFixed(2)+'%':'-')+'<\/span><\/div>';h+='<div class="cmp-row"><span>2Y<\/span><span>'+(d.r2?d.r2.toFixed(2)+'%':'-')+'<\/span><\/div>';h+='<div class="cmp-row"><span>3Y<\/span><span>'+(d.r3?d.r3.toFixed(2)+'%':'-')+'<\/span><\/div>';h+='<div class="cmp-row"><span>주식<\/span><span>'+(d.sp||0)+'%<\/span><\/div>';h+='<div class="cmp-row"><span>채권<\/span><span>'+(d.bp||0)+'%<\/span><\/div>';h+=AB(d);h+='<\/div>';}h+='<\/div>';OP('펀드 비교 ('+ds.length+'개)',h);}
-function applyPreset(name){if(F.preset===name){F.preset='';F.tdf='all';F.sk='nr';F.sd=-1;F.tmi='';F.tma='';}else{F.preset=name;STS.forEach(function(s){F.sf[s]=true;});F.vin='all';F.co='all';F.h='all';F.s='';if(name==='maxstock'){F.tdf='TDF';F.sk='sp';F.sd=-1;F.tmi='';F.tma='';}else if(name==='stable'){F.tdf='Non-TDF';F.sk='nr';F.sd=-1;F.tmi='';F.tma='';}else if(name==='lowcost'){F.tdf='all';F.sk='ftr';F.sd=1;F.tmi='';F.tma='0.2';}}R();}
+/* 북마크 */
+var BM=JSON.parse(localStorage.getItem('irpdc_bm')||'{}');
+function toggleBM(id){if(BM[id]){delete BM[id];}else{BM[id]=true;}localStorage.setItem('irpdc_bm',JSON.stringify(BM));R();}
+/* 한 줄 태그 생성 */
+function mkTag(d){var tags=[];
+if(d.ftr&&d.ftr<=0.1)tags.push('<span class="tag tag-g">최저보수<\/span>');
+if(d.sp>=70)tags.push('<span class="tag tag-b">주식'+d.sp+'%<\/span>');
+else if(d.sp>=50)tags.push('<span class="tag tag-b">주식'+d.sp+'%<\/span>');
+if(d.nr&&d.nr>=20)tags.push('<span class="tag tag-g">실질1Y 20%+<\/span>');
+else if(d.nr&&d.nr>=10)tags.push('<span class="tag tag-g">실질1Y 10%+<\/span>');
+if(d.a&&d.a<100)tags.push('<span class="tag tag-r">소규모<\/span>');
+if(d.a&&d.a>=5000)tags.push('<span class="tag tag-y">대형<\/span>');
+if(d.etf)tags.push('<span class="etf-tag">ETF<\/span>');
+return tags.join('');}
+/* 유사 상품 */
+function findSimilar(d){var res=[];for(var j=0;j<M.length;j++){var o=M[j];if(o.id===d.id)continue;if(o.sf!==d.sf)continue;var score=0;if(o.st===d.st)score+=3;if(Math.abs((o.sp||0)-(d.sp||0))<=10)score+=2;if(o.t===d.t)score+=1;if(score>=3)res.push({d:o,score:score});}res.sort(function(a,b){return b.score-a.score||(b.d.nr||0)-(a.d.nr||0);});return res.slice(0,3).map(function(r){return r.d;});}
+function applyPreset(name){if(F.preset===name){F.preset='';F.tdf='all';F.sk='nr';F.sd=-1;F.tmi='';F.tma='';}else{F.preset=name;STS.forEach(function(s){F.sf[s]=true;});F.vin='all';F.co='all';F.h='all';F.s='';if(name==='maxstock'){F.tdf='TDF';F.sk='sp';F.sd=-1;F.tmi='';F.tma='';}else if(name==='stable'){F.tdf='Non-TDF';F.sk='nr';F.sd=-1;F.tmi='';F.tma='';}else if(name==='lowcost'){F.tdf='all';F.sk='ftr';F.sd=1;F.tmi='';F.tma='0.2';}else if(name==='bookmarked'){F.tdf='all';F.sk='nr';F.sd=-1;}}R();}
 STS.forEach(function(s){F.sf[s]=true;});
-function GF(){var raw=M.filter(function(d){if(F.tab==='fund'&&d.etf)return false;if(F.tab==='etf'&&!d.etf)return false;if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.nrmi!==''&&(d.nr||0)<parseFloat(F.nrmi))return false;if(F.nrma!==''&&(d.nr||0)>parseFloat(F.nrma))return false;if(F.spmi!==''&&(d.sp||0)<parseFloat(F.spmi))return false;if(F.spma!==''&&(d.sp||0)>parseFloat(F.spma))return false;if(F.aumi!==''&&(d.a||0)<parseFloat(F.aumi))return false;if(F.auma!==''&&(d.a||0)>parseFloat(F.auma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});
+function GF(){var raw=M.filter(function(d){if(F.preset==='bookmarked'&&!BM[d.id])return false;if(F.tab==='fund'&&d.etf)return false;if(F.tab==='etf'&&!d.etf)return false;if(!F.sf[d.sf])return false;if(F.tdf!=='all'&&d.t!==F.tdf)return false;if(F.vin!=='all'&&d.v!==parseInt(F.vin))return false;if(F.co!=='all'&&d.c!==F.co)return false;if(F.h!=='all'&&d.h!==F.h)return false;if(F.tmi!==''&&d.ftr<parseFloat(F.tmi))return false;if(F.tma!==''&&d.ftr>parseFloat(F.tma))return false;if(F.nrmi!==''&&(d.nr||0)<parseFloat(F.nrmi))return false;if(F.nrma!==''&&(d.nr||0)>parseFloat(F.nrma))return false;if(F.spmi!==''&&(d.sp||0)<parseFloat(F.spmi))return false;if(F.spma!==''&&(d.sp||0)>parseFloat(F.spma))return false;if(F.aumi!==''&&(d.a||0)<parseFloat(F.aumi))return false;if(F.auma!==''&&(d.a||0)>parseFloat(F.auma))return false;if(F.s){var q=F.s.toLowerCase();if(d.bn.toLowerCase().indexOf(q)<0&&d.c.toLowerCase().indexOf(q)<0&&d.cd.toLowerCase().indexOf(q)<0)return false;}return true;}).sort(function(a,b){var va=a[F.sk],vb=b[F.sk];if(typeof va==='string')return va.localeCompare(vb)*F.sd;if(va==null)va=-9999;if(vb==null)vb=-9999;return(va-vb)*F.sd;});
 if(F.grp){var seen={},out=[];for(var i=0;i<raw.length;i++){var d=raw[i];var key=d.bn;if(seen[key])continue;seen[key]=true;out.push(d);}return out;}return raw;}
 function SC(s){return s==='안전자산'?'sf':s==='적격TDF'?'qt':'mx';}function SL(s){return s==='안전자산'?'안전':s==='적격TDF'?'적격TDF':'혼합';}
 function RC(v){return(v==null||v===0)?'z':v>0?'p':'ng';}function FR(v,d){if(d&&d.etf&&d.days_listed&&d.days_listed<365&&d.since_listing!=null){return'<span title="상장후 '+d.days_listed+'일">'+d.since_listing.toFixed(2)+'%*<\/span>';}return(v!=null&&v!==0)?v.toFixed(2)+'%':'-';}
@@ -161,8 +185,25 @@ h+='<div style="display:flex;gap:12px;font-size:11px;color:var(--td);margin-bott
 h+='<span>상품코드: <span class="cd-cell" onclick="copyCode(\x27'+d.cd+'\x27)" style="font-size:11px">'+d.cd+' 📋<\/span><\/span>';
 if(d.hd)h+='<span>환헤지: '+d.hd+'<\/span>';
 h+='<\/div>';
+/* 포트폴리오 시뮬레이터 */
+var riskSp=70,safeSp=30;
+var totalSp=Math.round(riskSp*1+safeSp*(d.sp||0)/100);
+var totalBp=Math.round(safeSp*(d.bp||0)/100);
+var totalOther=100-totalSp-totalBp;
+h+='<div class="sim-box"><div style="font-size:11px;font-weight:600;color:var(--td);margin-bottom:6px">포트폴리오 시뮬 (위험자산 70% 주식 + 안전자산 30% 이 상품)<\/div>';
+h+='<div style="display:flex;gap:8px;margin-bottom:6px">';
+h+='<div style="flex:1;text-align:center;padding:4px;background:var(--bg3);border-radius:4px"><div style="font-size:9px;color:var(--tm)">전체 주식<\/div><div style="font-size:16px;font-weight:700;color:var(--bl)">'+totalSp+'%<\/div><\/div>';
+h+='<div style="flex:1;text-align:center;padding:4px;background:var(--bg3);border-radius:4px"><div style="font-size:9px;color:var(--tm)">전체 채권<\/div><div style="font-size:16px;font-weight:700;color:#2a6cdb">'+totalBp+'%<\/div><\/div>';
+h+='<div style="flex:1;text-align:center;padding:4px;background:var(--bg3);border-radius:4px"><div style="font-size:9px;color:var(--tm)">기타<\/div><div style="font-size:16px;font-weight:700;color:var(--td)">'+totalOther+'%<\/div><\/div>';
+h+='<\/div><div style="display:flex;height:14px;border-radius:3px;overflow:hidden"><span style="width:'+totalSp+'%;background:#d03040"><\/span><span style="width:'+totalBp+'%;background:#2a6cdb"><\/span><span style="width:'+totalOther+'%;background:#0d8050"><\/span><\/div>';
+h+='<div style="font-size:10px;color:var(--tm);margin-top:4px">※ 위험자산 70%를 100% 주식으로 가정<\/div><\/div>';
+/* 유사 상품 */
+var sim=findSimilar(d);
+if(sim.length>0){h+='<div style="margin-top:10px"><div style="font-size:11px;font-weight:600;color:var(--td);margin-bottom:4px">비슷한 상품 (더 낮은 보수/높은 수익)<\/div>';
+for(var si=0;si<sim.length;si++){var s=sim[si];h+='<div class="similar-card" onclick="CP();setTimeout(function(){SP('+s.id+')},100)">'+s.bn.substring(0,25)+' <span style="color:var(--gn)">'+((s.nr||0)>0?'+':'')+((s.nr||0)).toFixed(1)+'%<\/span> <span style="color:var(--tm)">TER '+(s.ftr||0).toFixed(3)+'%<\/span><\/div>';}
+h+='<\/div>';}
 /* 링크 */
-h+='<div>';
+h+='<div style="margin-top:10px">';
 if(d.cu)h+='<a href="'+d.cu+'" target="_blank" rel="noopener" class="btn btn-gn">🏢 운용사 펀드 페이지<\/a>';
 h+='<span class="btn btn-bl" onclick="searchDart('+d.id+')">🔍 투자설명서 검색<\/span>';
 h+='<\/div>';
@@ -171,13 +212,13 @@ function AP(i,type){var d=M[i];var tm={stock:'주식',bond:'채권'};var am={sto
 function HP(i){var d=M[i];var hm={'H':'환헤지(H)','UH':'환노출(UH)','부분헤지':'부분헤지','미확인':'미확인'};var h='<div style="font-size:13px;line-height:1.5"><strong>분류:<\/strong> '+(hm[d.h]||d.h)+'<br>';if(d.hd)h+='<strong>상세:<\/strong> '+d.hd+'<br>';h+='<\/div>';OP(d.bn.substring(0,50)+' — 환헤지',h);}
 function TE(i){if(EX[i])delete EX[i];else EX[i]=true;R();}
 function R(){var fl=GF(),app=document.getElementById('app');var vR=fl.filter(function(d){return d.r1&&d.r1!==0;}),aR=vR.length?vR.reduce(function(s,d){return s+d.r1;},0)/vR.length:0;var tA=fl.reduce(function(s,d){return s+(d.a||0);},0);var sc=fl.filter(function(d){return d.sf==='안전자산';}).length;var qc=fl.filter(function(d){return d.sf==='적격TDF';}).length;var vT=fl.filter(function(d){return d.ftr>0;});var aT=vT.length?vT.reduce(function(s,d){return s+d.ftr;},0)/vT.length:0;var cos=[];M.forEach(function(d){if(cos.indexOf(d.c)<0)cos.push(d.c);});cos.sort();var vins=[];M.forEach(function(d){if(d.v>0&&vins.indexOf(d.v)<0)vins.push(d.v);});vins.sort(function(a,b){return a-b;});var sC={};STS.forEach(function(s){sC[s]=M.filter(function(d){return d.sf===s;}).length;});var e='<td><\/td>';var rw='';
-if(fl.length===0){rw='<tr><td colspan="18" class="nd">조건에 맞는 상품이 없습니다<\/td><\/tr>';}
+if(fl.length===0){rw='<tr><td colspan="19" class="nd">조건에 맞는 상품이 없습니다<\/td><\/tr>';}
 else{for(var idx=0;idx<fl.length;idx++){var d=fl[idx];var hk=d.children.length>0,io=!!EX[d.id];
 rw+='<tr class="mr'+(hk?' hc':'')+'"'+(hk?' onclick="TE('+d.id+')"':'')+'>';
 rw+='<td class="tc"><input type="checkbox"'+(CMP[d.id]?' checked':'')+' onclick="event.stopPropagation();toggleCmp('+d.id+')" style="cursor:pointer" title="비교 선택"><\/td>';
 rw+='<td><span class="st '+SC(d.sf)+'">'+SL(d.sf)+'<\/span><\/td>';
 rw+='<td class="cd-cell" onclick="event.stopPropagation();copyCode(\x27'+d.cd+'\x27)" title="클릭시 복사">'+d.cd+'<\/td>';
-rw+='<td class="nc">'+d.bn+(d.etf?'<span class="etf-tag">ETF<\/span>':'')+'<\/td>';
+rw+='<td class="nc"><span class="bm-btn'+(BM[d.id]?' on':'')+'" onclick="event.stopPropagation();toggleBM('+d.id+')" title="북마크">'+(BM[d.id]?'★':'☆')+'<\/span> '+d.bn+mkTag(d)+'<\/td>';
 rw+='<td class="co">'+d.c.replace('자산운용','')+'<\/td>';
 rw+='<td>'+(d.v>0?'<span class="vt">'+d.v+'<\/span>':'-')+'<\/td>';
 rw+='<td class="ck" onclick="event.stopPropagation();HP('+d.id+')">'+HT(d.h)+'<\/td>';
@@ -188,6 +229,7 @@ rw+='<td class="n '+RC(d.nr)+'">'+FR(d.nr,d)+'<\/td>';
 rw+='<td class="n '+RC(d.r1)+'">'+FR(d.r1,d)+'<\/td>';
 rw+='<td class="n '+RC(d.r2)+'">'+FR(d.r2)+'<\/td>';
 rw+='<td class="n '+RC(d.r3)+'">'+FR(d.r3)+'<\/td>';
+rw+='<td style="font-size:10px;color:var(--td);white-space:nowrap">'+(d.sd||'-')+'<\/td>';
 rw+='<td class="ck">'+AB(d)+'<\/td>';
 var _desc=d.sd2||d.sp2||'';rw+='<td class="ck" onclick="event.stopPropagation();SP('+d.id+')" style="color:var(--td);font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(_desc?_desc.substring(0,20):'-')+'<\/td>';
 rw+='<td style="text-align:center">';
@@ -225,12 +267,13 @@ h+='<span style="font-size:10px;color:var(--tm);line-height:28px;margin-right:4p
 h+='<span class="preset-btn'+(F.preset==='maxstock'?' on':'')+'" onclick="applyPreset(\'maxstock\')">주식비중 극대화<\/span>';
 h+='<span class="preset-btn'+(F.preset==='stable'?' on':'')+'" onclick="applyPreset(\'stable\')">안정 수익 추구<\/span>';
 h+='<span class="preset-btn'+(F.preset==='lowcost'?' on':'')+'" onclick="applyPreset(\'lowcost\')">최저 비용 (TER 0.2%↓)<\/span>';
+h+='<span class="preset-btn'+(F.preset==='bookmarked'?' on':'')+'" onclick="applyPreset(\'bookmarked\')">★ 북마크<\/span>';
 h+='<label style="margin-left:auto;font-size:11px;color:var(--td);cursor:pointer;display:flex;align-items:center;gap:4px"><input type="checkbox" id="grpChk"'+(F.grp?' checked':'')+' style="cursor:pointer"> 동일펀드 그룹핑<\/label>';
 h+='<\/div>';
 var da=daysAgo();var dcls=da<=7?'date-ok':da<=30?'date-old':'date-stale';
 h+='<div class="note">※ 수익률(1Y/2Y/3Y)은 <strong>연평균(CAGR)<\/strong> 기준입니다. <span class="date-warn '+dcls+'">'+da+'일 경과<\/span> | 상품코드 클릭 시 복사 | ⚠ = 순자산 100억 미만 (청산 위험)<\/div>';
 h+='<div class="cnt"><div class="tx"><strong>'+fl.length+'<\/strong>개'+(F.grp?' (그룹핑)':'')+'<\/div><div><span class="btn btn-bl" onclick="exportCSV()" style="font-size:11px;padding:3px 10px">📥 CSV<\/span><\/div><\/div>';
-h+='<div class="tw"><table><thead><tr><th style="width:28px;cursor:default" title="비교 선택">☐<\/th><th data-s="sf">분류'+SA('sf')+'<\/th><th data-s="cd">코드'+SA('cd')+'<\/th><th data-s="bn">펀드명'+SA('bn')+'<\/th><th data-s="c">운용사'+SA('c')+'<\/th><th data-s="v">빈티지'+SA('v')+'<\/th><th data-s="h">환'+SA('h')+'<\/th><th data-s="a">순자산'+SA('a')+'<\/th><th data-s="ft2" class="fc">총보수'+SA('ft2')+'<\/th><th data-s="ftr" class="fc">TER'+SA('ftr')+'<\/th><th data-s="nr" class="fc">실질1Y'+SA('nr')+'<\/th><th data-s="r1">1Y'+SA('r1')+'<\/th><th data-s="r2">2Y'+SA('r2')+'<\/th><th data-s="r3">3Y'+SA('r3')+'<\/th><th>자산배분<\/th><th>소개<\/th><th>링크<\/th><\/tr><\/thead><tbody>'+rw+'<\/tbody><\/table><\/div>';
+h+='<div class="tw"><table><thead><tr><th style="width:28px;cursor:default" title="비교 선택">☐<\/th><th data-s="sf">분류'+SA('sf')+'<\/th><th data-s="cd">코드'+SA('cd')+'<\/th><th data-s="bn">펀드명'+SA('bn')+'<\/th><th data-s="c">운용사'+SA('c')+'<\/th><th data-s="v">빈티지'+SA('v')+'<\/th><th data-s="h">환'+SA('h')+'<\/th><th data-s="a">순자산'+SA('a')+'<\/th><th data-s="ft2" class="fc">총보수'+SA('ft2')+'<\/th><th data-s="ftr" class="fc">TER'+SA('ftr')+'<\/th><th data-s="nr" class="fc">실질1Y'+SA('nr')+'<\/th><th data-s="r1">1Y'+SA('r1')+'<\/th><th data-s="r2">2Y'+SA('r2')+'<\/th><th data-s="r3">3Y'+SA('r3')+'<\/th><th data-s="sd">설정일'+SA('sd')+'<\/th><th>자산배분<\/th><th>소개<\/th><th>링크<\/th><\/tr><\/thead><tbody>'+rw+'<\/tbody><\/table><\/div>';
 app.innerHTML=h;
 document.querySelectorAll('.bd').forEach(function(b){b.addEventListener('click',function(){var s=b.getAttribute('data-sf');F.sf[s]=!F.sf[s];R();});});
 document.getElementById('f1').addEventListener('change',function(ev){F.tdf=ev.target.value;R();});
