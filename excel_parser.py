@@ -38,6 +38,16 @@ def _float(v):
         return 0
 
 
+def _cum_to_cagr(cum_pct, years):
+    """누적수익률(%) → 연평균복리수익률(CAGR, %)"""
+    if not cum_pct or years <= 1:
+        return cum_pct or 0
+    try:
+        return round(((1 + cum_pct / 100) ** (1.0 / years) - 1) * 100, 2)
+    except (ValueError, ZeroDivisionError):
+        return 0
+
+
 # ---------------------------------------------------------------------------
 # 자산비중 추론
 # ---------------------------------------------------------------------------
@@ -179,9 +189,13 @@ def parse_pension_disclosure(path):
         aum = round(aum_million / 100, 1)
 
         # 수익률
-        r1 = _float(ws.cell_value(r, y1_col))
-        r2 = _float(ws.cell_value(r, y2_col))
-        r3 = _float(ws.cell_value(r, y3_col))
+        # 엑셀 수익률은 누적수익률 → CAGR로 변환
+        r1_cum = _float(ws.cell_value(r, y1_col))  # 1년은 누적=CAGR 동일
+        r2_cum = _float(ws.cell_value(r, y2_col))
+        r3_cum = _float(ws.cell_value(r, y3_col))
+        r1 = r1_cum  # 1년은 그대로
+        r2 = _cum_to_cagr(r2_cum, 2)
+        r3 = _cum_to_cagr(r3_cum, 3)
 
         # baseName: 클래스/종류 접미사 제거
         base_name = re.sub(
